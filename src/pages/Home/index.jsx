@@ -66,6 +66,7 @@ export function Home() {
             <button onClick={handlefetchuser}>Buscar Usuários</button>
             <br/>
             
+            
             {loading && <strong>Carregando Usuário...</strong>}
 
             {!loading && users.map((user) => (
