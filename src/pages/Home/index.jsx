@@ -2,10 +2,23 @@ import styles from './home.module.css'
 import { Header } from '../../components/header'
 import { Link } from 'react-router-dom'
 
+import { useSelector, useDispatch } from 'react-redux'
+import { deleteAddress, fetchUsers } from '../../redux/user/slice'
+
+import rootReducer from '../../redux/root-reducer'
+
 export function Home() {
 
+  const {user, users, loading } = useSelector((rootReducer) => rootReducer.user)
+  const dispatch = useDispatch();
+  
   function handleDeleteAddress(){
+    dispatch(deleteAddress())
     alert("Endereço deletado com sucesso!")
+  }
+
+  function handlefetchuser(){
+    dispatch(fetchUsers())
   }
 
   return (
@@ -27,18 +40,39 @@ export function Home() {
         <main className={styles.content}>
           <div className={styles.message}>
             <h1 className={styles.title}>
-              Olá Visitante, bem vindo!
+              Olá {user ? user.name : "Visitante"}, bem vindo!
             </h1>
 
-            <span>Email: ....</span>
+            { user && (
+              <span>Email: {user.email} </span>
+            )}
 
 
-            <strong className={styles.addressLabel}>Endereço atual:</strong>
-            <div className={styles.address}>
-              <p>Rua centro, n 123</p>
-              
-              <button onClick={handleDeleteAddress}>Deletar endereço</button>
-            </div>
+            {user && user.address && (
+              <>
+                <strong className={styles.addressLabel}>Endereço atual:</strong>
+                <div className={styles.address}>
+                  <p> {user.address.location}, n {user.address.number}</p>
+                  
+                  <button onClick={handleDeleteAddress}>Deletar endereço</button>
+                </div>
+              </>
+            )}
+
+            <hr/>
+            <br/>
+
+            <h2> Lista de Usuários</h2>
+            <button onClick={handlefetchuser}>Buscar Usuários</button>
+            <br/>
+            
+            {loading && <strong>Carregando Usuário...</strong>}
+
+            {!loading && users.map((user) => (
+              <div key={user.id}>
+                <p>ID: {user.id} | {user.name} </p>
+              </div>
+            ))}
 
           </div>
 
